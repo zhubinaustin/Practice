@@ -1,0 +1,14 @@
+Preorder traversal: 27 14 12 11 15 25 24 35 34 32 36 99 45 38 37 89 54 66 55 96 
+Inorder traversal: 11 12 14 15 24 25 27 32 34 35 36 37 38 45 54 55 66 89 96 99 
+Post order traversal: 11 12 24 25 15 14 32 34 37 38 55 66 54 96 89 45 99 36 35 27 
+Preorder traversal w Iterator:
+[ 27 14 12 11 15 25 24 35 34 32 36 99 45 38 37 89 54 66 55 96 ]
+MaxStackDepth: 2
+
+Inorder traversal w Iterator:
+[ 11 12 14 15 24 25 27 32 34 35 36 37 38 45 54 55 66 89 96 99 ]
+MaxStackDepth: 4
+
+Postorder traversal w Iterator:
+[ 11 12 24 25 15 14 32 34 37 38 55 66 54 96 89 45 99 36 35 27 ]
+MaxStackDepth: 10

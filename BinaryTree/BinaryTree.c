@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stack>
+#include <queue>
 
 struct node {
    int data;
@@ -101,6 +102,51 @@ void post_order_traversal(struct node* root) {
       post_order_traversal(root->rightChild);
       printf("%d ", root->data);
    }
+}
+
+/* Compute the "height" of a tree -- the number of
+    nodes along the longest path from the root node
+    down to the farthest leaf node.*/
+int height(struct node* node)
+{
+    if (node==NULL)
+        return 0;
+    else
+    {
+        /* compute the height of each subtree */
+        int lheight = height(node->leftChild);
+        int rheight = height(node->rightChild);
+ 
+        /* use the larger one */
+        if (lheight > rheight)
+            return(lheight+1);
+        else return(rheight+1);
+    }
+}
+
+/* Print nodes at a given level */
+void printGivenLevel(struct node* root, int level)
+{
+    if (root == NULL)
+        return;
+    if (level == 1)
+        printf("%d ", root->data);
+    else if (level > 1)
+    {
+        printGivenLevel(root->leftChild, level-1);
+        printGivenLevel(root->rightChild, level-1);
+    }
+}
+ 
+/* Function to print level order traversal a tree*/
+void level_order_traversal(struct node* root)
+{
+    int h = height(root);
+    int i;
+    for (i=1; i<=h; i++){
+        printGivenLevel(root, i);
+        printf("-");
+    }
 }
 
 /* implement an Iterator class to sort */
@@ -296,6 +342,59 @@ void PostOrderNodeIterator::initStack(node* root)
         stackDepth = mStack.size();
 }
 
+/* level-order Iterator */
+class LevelOrderNodeIterator: public Iterator <node*>
+{
+      public:
+       LevelOrderNodeIterator(node* pRoot);
+       ~LevelOrderNodeIterator(){};
+      public:
+        bool hasNext();
+        node* next();
+        int  maxStackDepth(){ return stackDepth;};
+      protected:
+        void  initStack(node* pNode);
+      private:
+        std::queue <node*> mStack;
+        int stackDepth;
+};
+
+LevelOrderNodeIterator::LevelOrderNodeIterator(node* root)
+{
+    stackDepth = 0;
+    if(root){
+        mStack.push(root);
+        stackDepth = 1;
+    }
+}
+
+bool LevelOrderNodeIterator::hasNext()
+{
+     return !mStack.empty();
+}
+
+node* LevelOrderNodeIterator::next()
+{
+    /* check the right child and go to very left of the node */
+    node* pNode = mStack.front();
+    mStack.pop();
+    
+    if(pNode->leftChild) mStack.push(pNode->leftChild);
+    if(pNode->rightChild) mStack.push(pNode->rightChild);
+
+    if(mStack.size() > stackDepth)
+        stackDepth = mStack.size();
+    
+    return pNode;
+}  
+
+/* protected */
+void LevelOrderNodeIterator::initStack(node* root)
+{
+    if(mStack.size() > stackDepth)
+        stackDepth = mStack.size();
+}
+
 #define MAX 20
 int main() {
    int i;
@@ -332,6 +431,9 @@ int main() {
 
    printf("\nPost order traversal: ");
    post_order_traversal(root);       
+
+   printf("\nLevel order traversal: ");
+   level_order_traversal(root);       
    
    printf("\nPreorder traversal w Iterator:\n[ ");
    PreOrderNodeIterator preIter(root);
@@ -356,6 +458,14 @@ int main() {
    }
    printf("]\n");
    printf("MaxStackDepth: %d\n", postIter.maxStackDepth());
+
+   printf("\nLevel order traversal w Iterator:\n[ ");
+   LevelOrderNodeIterator levelIter(root);
+   while(levelIter.hasNext()){
+       printf("%d ", levelIter.next()->data);
+   }
+   printf("]\n");
+   printf("MaxStackDepth: %d\n", levelIter.maxStackDepth());
     
    return 0;
 }
